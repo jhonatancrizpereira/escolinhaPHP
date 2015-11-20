@@ -54,8 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'X-Mailer: PHP/' . phpversion();
 
     if (strlen($nameErr) == 0 &&
-            strlen($emailErr) == 0 &&
-            strlen($websiteErr) == 0) {
+        strlen($emailErr) == 0 &&
+        strlen($websiteErr) == 0 &&
+        strlen($name) !=0 && strlen($email) != 0)
+    {
         mail($para, $assunto, $mensagem, $headers);
         $statusMail = TRUE;
     } else
