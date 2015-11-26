@@ -4,7 +4,10 @@
 if($_SERVER['SERVER_ADDR'] == '127.0.0.1')
     require_once 'dbconfig.php';
 else
-    require_once 'dbconfighostinger.php';
+    require_once 'dbconfigHstinger.php';
+
+//Inclusão da função que envia e-mail
+include_once 'emailConfirma.php';
 
 /*
  * Conexão com o banco de dados 
@@ -59,17 +62,25 @@ if (isset($_POST['btn'])) {
         $p = $conn->prepare($sql);
         $q = $p->execute($parametros);
         
-        /* ENVIO DE E-MAIL PARA CONFIRMAÇÃO*/
+        /**
+         * Envio de e-mail para confirmação
+         */
         
-        //Link para ser enviado por email
-            $link = "<a href='http:// $_SERVER['SERVER_NAME']".$_SERVER['PHP_SELF']."?cod=e&hash=$cod' title='Clique aqui para confirmar o e-mail'>";
-            $link .= "Clique para confirmar o seu e-mail" . "\t";
+        //Link para ser enviado por e-mail
+            $link = "<a href='http://"; 
+            $link .= $_SERVER['SERVER_NAME'];        
+            $link .= $_SERVER['PHP_SELF'];
+            $link .= "?cod=e&hash=$cod' ";
+            $link .= "title='Clique para confirmar o e-mail'>";
+            $link .= "Clique para confirmar seu e-mail";
             $link .= "</a>";
             
-            emailconfirma($email, $link);
-
-        /* ------------------------------- */
+            emailConfirma($email,$link);
             
+        /**
+         * ----------------------------------
+         */
+
         //Listagem de e-mails
         header('Location: cadastro.php?cod=listar');
         
@@ -101,13 +112,16 @@ if (isset($_POST['btn'])) {
             echo $r['email'] . "\t";
             
             //Link de exclusão
-            echo "<a href='cadastro.php?cod=d&hash=$r[cod]' title='Clique para excluir'>";
+            echo "<a href='cadastro.php?cod=d&hash=$r[cod]' ";
+            echo "title='Clique para excluir'>";
             echo $r['cod'];
             echo "</a>" . "\t";
             
-            //Link para ser enviado por email
-            $link = "<a href='".$_SERVER['PHP_SELF']."?cod=e&hash=$r[cod]' title='Clique aqui para confirmar o e-mail'>";
-            $link .=$r['situacao'] . "\t";
+            //Link para ser enviado por e-mail
+            $link = "<a href='". $_SERVER['PHP_SELF'];
+            $link .= "?cod=e&hash=$r[cod]' ";
+            $link .= "title='Clique para confirmar o e-mail'>";
+            $link .= $r['situacao'] . "\t";
             $link .= "</a>";
             
             echo $link;
@@ -130,12 +144,15 @@ if (isset($_POST['btn'])) {
         
         header("Location: cadastro.php?cod=listar");
     }
-    
     //Atualização da situação cadastral
     //Confirmação de e-mail
     elseif($_GET['cod'] == 'e' && isset ($_GET['hash'])){
-        $sql = "update lista set situacao=1, dtAtualizacao= now() where cod = :hash";
-        $hash = filter_input(INPUT_GET, 'hash', FILTER_SANITIZE_STRING);
+        
+        $sql = "update lista set situacao=1, "
+                . "dtAtualizacao = now() where cod = :hash";
+        
+        $hash = filter_input(INPUT_GET, 'hash', 
+                FILTER_SANITIZE_STRING);
         
         //echo "<h1>$hash</h1>";
         
@@ -144,7 +161,6 @@ if (isset($_POST['btn'])) {
         
         header("Location: cadastro.php?cod=listar");
     }
-    
     //Validação do e-mail
 } else {
     //Botão cadastrar não foi pressionado
