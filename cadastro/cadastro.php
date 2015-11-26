@@ -55,7 +55,18 @@ if (isset($_POST['btn'])) {
             ':cod' => $cod);
         $p = $conn->prepare($sql);
         $q = $p->execute($parametros);
+        
+        /* ENVIO DE E-MAIL PARA CONFIRMAÇÃO*/
+        
+        //Link para ser enviado por email
+            $link = "<a href='http:// $_SERVER['SERVER_NAME']".$_SERVER['PHP_SELF']."?cod=e&hash=$cod' title='Clique aqui para confirmar o e-mail'>";
+            $link .= "Clique para confirmar o seu e-mail" . "\t";
+            $link .= "</a>";
+            
+            emailconfirma($email, $link);
 
+        /* ------------------------------- */
+            
         //Listagem de e-mails
         header('Location: cadastro.php?cod=listar');
         
