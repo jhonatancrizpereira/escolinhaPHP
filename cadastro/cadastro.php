@@ -1,7 +1,10 @@
 <?php
 
 //Faz a requisição de dados paraconexão com o BD
-require_once 'dbconfig.php';
+if($_SERVER['SERVER_ADDR'] == '127.0.0.1')
+    require_once 'dbconfig.php';
+else
+    require_once 'dbconfighostinger.php';
 
 /*
  * Conexão com o banco de dados 
